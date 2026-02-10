@@ -1,0 +1,12 @@
+/node_modules
+
+.env
+
+.vscode
+.DS_Store
+.idea
+
+.editorconfig
+.prettierrc
+
+pull-requests.txt

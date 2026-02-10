@@ -35,8 +35,15 @@ export function setupServer() {
           options: { colorize: true },
         },
       }),
+      autoLogging: {
+        ignore: (req) => req.url === '/ping',
+      },
     }),
   );
+
+  app.get('/ping', (_req, res) => {
+    res.status(200).json({ status: 'ok' });
+  });
 
   app.use('/api/auth', authRouter);
 

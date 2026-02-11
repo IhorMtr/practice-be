@@ -64,14 +64,16 @@ export const loginUserController: RequestHandler<{}, any, LoginBody> = async (
 };
 
 export const logoutUserController: RequestHandler = async (req, res) => {
-  const { sessionId } = req.cookies as AuthCookies;
+  const sessionId = (req as any).sessionId as string;
 
-  if (sessionId) {
-    await logoutUser(sessionId);
-  }
+  await logoutUser(sessionId);
 
-  res.clearCookie('sessionId');
-  res.clearCookie('refreshToken');
+  res.clearCookie('sessionId', { path: '/', sameSite: 'none', secure: true });
+  res.clearCookie('refreshToken', {
+    path: '/',
+    sameSite: 'none',
+    secure: true,
+  });
 
   res.status(204).send();
 };

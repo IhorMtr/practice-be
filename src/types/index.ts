@@ -19,6 +19,8 @@ export type {
   AuthCookies,
 } from './types/auth.type.js';
 
+export type { IdParams, AdminUpdatePayload } from './types/users.type.js';
+
 // ================ ENUMS ================
 
 export { USER_ROLES, type UserRole } from './enums/user-role.enum.js';

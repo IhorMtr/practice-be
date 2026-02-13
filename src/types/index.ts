@@ -3,6 +3,7 @@
 export type { User } from './interfaces/user.interface.js';
 export type { Session } from './interfaces/session.interface.js';
 export type { AuthSession } from './interfaces/session.interface.js';
+export type { Client } from './interfaces/client.interface.js';
 
 // ================ TYPES ================
 
@@ -19,7 +20,12 @@ export type {
   AuthCookies,
 } from './types/auth.type.js';
 
-export type { IdParams, AdminUpdatePayload } from './types/users.type.js';
+export type { AdminUpdatePayload } from './types/users.type.js';
+export type {
+  CreateClientPayload,
+  UpdateClientPayload,
+} from './types/client.type.js';
+export type { IdParams } from './types/global.type.js';
 
 // ================ ENUMS ================
 

@@ -1,4 +1,5 @@
 import createHttpError from 'http-errors';
+
 import { UsersCollection } from '../db/models/user.js';
 import { AdminUpdatePayload } from '../types/index.js';
 

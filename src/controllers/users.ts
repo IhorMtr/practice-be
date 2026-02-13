@@ -1,7 +1,7 @@
 import type { RequestHandler } from 'express';
 import createHttpError from 'http-errors';
-
 import { isValidObjectId } from 'mongoose';
+
 import {
   listUsers,
   getUserById,

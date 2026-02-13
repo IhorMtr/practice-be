@@ -7,7 +7,6 @@ import {
   updateClientController,
   deleteClientController,
 } from '../controllers/clients.js';
-
 import { authenticate } from '../middlewares/authenticate.js';
 import { authorize } from '../middlewares/authorize.js';
 import { validateBody } from '../middlewares/validateBody.js';

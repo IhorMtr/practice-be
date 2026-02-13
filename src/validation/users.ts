@@ -1,4 +1,5 @@
 import Joi from 'joi';
+
 import { USER_ROLES } from '../types/index.js';
 
 export const updateUserByAdminSchema = Joi.object({

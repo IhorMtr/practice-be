@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+
 import type { User } from '../../types/index.js';
 import { USER_ROLES } from '../../types/index.js';
 

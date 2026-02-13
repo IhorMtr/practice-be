@@ -1,4 +1,5 @@
 import Joi from 'joi';
+
 import { TICKET_PRIORITIES, TICKET_STATUSES } from '../types/index.js';
 
 export const createTicketSchema = Joi.object({

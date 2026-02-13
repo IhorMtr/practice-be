@@ -1,4 +1,5 @@
 import createHttpError from 'http-errors';
+
 import { ClientsCollection } from '../db/models/client.js';
 import { CreateClientPayload, UpdateClientPayload } from '../types/index.js';
 

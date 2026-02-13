@@ -28,10 +28,14 @@ export const createTicketController: RequestHandler = async (req, res) => {
 export const listTicketsController: RequestHandler = async (req, res) => {
   const user = req.user!;
 
-  const { status, priority, clientId } = req.query as Record<
-    string,
-    string | undefined
-  >;
+  const status =
+    typeof req.query.status === 'string' ? req.query.status : undefined;
+  const priority =
+    typeof req.query.priority === 'string' ? req.query.priority : undefined;
+  const clientId =
+    typeof req.query.clientId === 'string' ? req.query.clientId : undefined;
+  const search =
+    typeof req.query.search === 'string' ? req.query.search : undefined;
 
   const tickets = await listTickets({
     role: user.role,
@@ -39,6 +43,7 @@ export const listTicketsController: RequestHandler = async (req, res) => {
     status: status as any,
     priority: priority as any,
     clientId,
+    search,
   });
 
   res.json({

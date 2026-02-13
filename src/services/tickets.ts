@@ -50,6 +50,7 @@ export const listTickets = async (opts: {
   status?: TicketStatus;
   priority?: TicketPriority;
   clientId?: string;
+  search?: string;
 }) => {
   const filter: any = {};
 
@@ -60,6 +61,14 @@ export const listTickets = async (opts: {
     if (!isValidObjectId(opts.clientId))
       throw createHttpError(400, 'Invalid clientId');
     filter.clientId = opts.clientId;
+  }
+
+  if (opts.search && opts.search.trim() !== '') {
+    const q = opts.search.trim();
+    filter.$or = [
+      { deviceType: { $regex: q, $options: 'i' } },
+      { problemDescription: { $regex: q, $options: 'i' } },
+    ];
   }
 
   if (opts.role === 'technician') {

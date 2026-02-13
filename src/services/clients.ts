@@ -2,8 +2,18 @@ import createHttpError from 'http-errors';
 import { ClientsCollection } from '../db/models/client.js';
 import { CreateClientPayload, UpdateClientPayload } from '../types/index.js';
 
-export const listClients = async () => {
-  return ClientsCollection.find().sort({ createdAt: -1 });
+export const listClients = async (search?: string) => {
+  const filter: any = {};
+
+  if (search && search.trim() !== '') {
+    const q = search.trim();
+    filter.$or = [
+      { fullName: { $regex: q, $options: 'i' } },
+      { email: { $regex: q, $options: 'i' } },
+    ];
+  }
+
+  return ClientsCollection.find(filter).sort({ createdAt: -1 });
 };
 
 export const getClientById = async (id: string) => {

@@ -9,11 +9,13 @@ import {
   updateClient,
   deleteClient,
 } from '../services/clients.js';
-
 import { IdParams } from '../types/index.js';
 
-export const listClientsController: RequestHandler = async (_req, res) => {
-  const clients = await listClients();
+export const listClientsController: RequestHandler = async (req, res) => {
+  const search =
+    typeof req.query.search === 'string' ? req.query.search : undefined;
+
+  const clients = await listClients(search);
 
   res.json({
     status: 200,

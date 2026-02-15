@@ -19,7 +19,7 @@ const setupSession = (res: Response, session: AuthSession) => {
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
     expires: new Date(Date.now() + THIRTY_DAYS),
-    secure: true,
+    secure: false,
     sameSite: 'none',
     path: '/',
   });
@@ -27,7 +27,7 @@ const setupSession = (res: Response, session: AuthSession) => {
   res.cookie('sessionId', session.id, {
     httpOnly: true,
     expires: new Date(Date.now() + THIRTY_DAYS),
-    secure: true,
+    secure: false,
     sameSite: 'none',
     path: '/',
   });
@@ -77,11 +77,11 @@ export const logoutUserController: RequestHandler<
 
   await logoutUser(sessionId);
 
-  res.clearCookie('sessionId', { path: '/', sameSite: 'none', secure: true });
+  res.clearCookie('sessionId', { path: '/', sameSite: 'none', secure: false });
   res.clearCookie('refreshToken', {
     path: '/',
     sameSite: 'none',
-    secure: true,
+    secure: false,
   });
 
   const body: BaseResponse<null> = {

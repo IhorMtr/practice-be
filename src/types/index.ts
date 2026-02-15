@@ -34,6 +34,8 @@ export type {
   CreateTicketPayload,
   ManagerUpdatePayload,
 } from './types/tickets.type.js';
+export type { BaseResponse } from './types/base-respons.type.js';
+export type { KnownError } from './types/error-handle.type.js';
 
 // ================ ENUMS ================
 

@@ -7,22 +7,28 @@ import {
   getUserById,
   updateUserByAdmin,
 } from '../services/users.js';
-import { IdParams } from '../types/index.js';
+import type { IdParams, BaseResponse } from '../types/index.js';
 
-export const listUsersController: RequestHandler = async (_req, res) => {
+export const listUsersController: RequestHandler<
+  {},
+  BaseResponse<any>
+> = async (_req, res) => {
   const users = await listUsers();
 
-  res.json({
-    status: 200,
-    message: 'Users list',
+  const body: BaseResponse<typeof users> = {
+    success: true,
     data: users,
-  });
+    errors: null,
+    message: 'Users list',
+  };
+
+  res.status(200).json(body);
 };
 
-export const getUserByIdController: RequestHandler<IdParams> = async (
-  req,
-  res,
-) => {
+export const getUserByIdController: RequestHandler<
+  IdParams,
+  BaseResponse<any>
+> = async (req, res) => {
   const { id } = req.params;
 
   if (!isValidObjectId(id)) throw createHttpError(400, 'Invalid user id');
@@ -30,26 +36,32 @@ export const getUserByIdController: RequestHandler<IdParams> = async (
   const user = await getUserById(id);
   if (!user) throw createHttpError(404, 'User not found');
 
-  res.json({
-    status: 200,
-    message: 'User found',
+  const body: BaseResponse<typeof user> = {
+    success: true,
     data: user,
-  });
+    errors: null,
+    message: 'User found',
+  };
+
+  res.status(200).json(body);
 };
 
-export const updateUserByAdminController: RequestHandler<IdParams> = async (
-  req,
-  res,
-) => {
+export const updateUserByAdminController: RequestHandler<
+  IdParams,
+  BaseResponse<any>
+> = async (req, res) => {
   const { id } = req.params;
 
   if (!isValidObjectId(id)) throw createHttpError(400, 'Invalid user id');
 
   const updated = await updateUserByAdmin(id, req.body);
 
-  res.json({
-    status: 200,
-    message: 'User updated',
+  const body: BaseResponse<typeof updated> = {
+    success: true,
     data: updated,
-  });
+    errors: null,
+    message: 'User updated',
+  };
+
+  res.status(200).json(body);
 };

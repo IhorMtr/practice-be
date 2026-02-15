@@ -9,8 +9,12 @@ import {
   updateTicketByManager,
   updateTicketStatus,
 } from '../services/tickets.js';
+import type { BaseResponse } from '../types/index.js';
 
-export const createTicketController: RequestHandler = async (req, res) => {
+export const createTicketController: RequestHandler<
+  {},
+  BaseResponse<any>
+> = async (req, res) => {
   const user = req.user!;
   if (user.role !== 'admin' && user.role !== 'manager') {
     throw createHttpError(403, 'Forbidden');
@@ -18,14 +22,20 @@ export const createTicketController: RequestHandler = async (req, res) => {
 
   const ticket = await createTicket(user.id, req.body);
 
-  res.status(201).json({
-    status: 201,
-    message: 'Ticket created',
+  const body: BaseResponse<typeof ticket> = {
+    success: true,
     data: ticket,
-  });
+    errors: null,
+    message: 'Ticket created',
+  };
+
+  res.status(201).json(body);
 };
 
-export const listTicketsController: RequestHandler = async (req, res) => {
+export const listTicketsController: RequestHandler<
+  {},
+  BaseResponse<any>
+> = async (req, res) => {
   const user = req.user!;
 
   const status =
@@ -46,44 +56,52 @@ export const listTicketsController: RequestHandler = async (req, res) => {
     search,
   });
 
-  res.json({
-    status: 200,
-    message: 'Tickets list',
+  const body: BaseResponse<typeof tickets> = {
+    success: true,
     data: tickets,
-  });
+    errors: null,
+    message: 'Tickets list',
+  };
+
+  res.status(200).json(body);
 };
 
 type IdParams = { id: string };
 
-export const getTicketByIdController: RequestHandler<IdParams> = async (
-  req,
-  res,
-) => {
+export const getTicketByIdController: RequestHandler<
+  IdParams,
+  BaseResponse<any>
+> = async (req, res) => {
   const user = req.user!;
+
   const ticket = await getTicketById({
     id: req.params.id,
     role: user.role,
     actorId: user.id,
   });
 
-  res.json({
-    status: 200,
-    message: 'Ticket found',
+  const body: BaseResponse<typeof ticket> = {
+    success: true,
     data: ticket,
-  });
+    errors: null,
+    message: 'Ticket found',
+  };
+
+  res.status(200).json(body);
 };
 
-export const updateTicketByManagerController: RequestHandler<IdParams> = async (
-  req,
-  res,
-) => {
+export const updateTicketByManagerController: RequestHandler<
+  IdParams,
+  BaseResponse<any>
+> = async (req, res) => {
   const user = req.user!;
   if (user.role !== 'admin' && user.role !== 'manager') {
     throw createHttpError(403, 'Forbidden');
   }
 
-  if (!isValidObjectId(req.params.id))
+  if (!isValidObjectId(req.params.id)) {
     throw createHttpError(400, 'Invalid ticket id');
+  }
 
   const updated = await updateTicketByManager({
     id: req.params.id,
@@ -91,17 +109,20 @@ export const updateTicketByManagerController: RequestHandler<IdParams> = async (
     payload: req.body,
   });
 
-  res.json({
-    status: 200,
-    message: 'Ticket updated',
+  const body: BaseResponse<typeof updated> = {
+    success: true,
     data: updated,
-  });
+    errors: null,
+    message: 'Ticket updated',
+  };
+
+  res.status(200).json(body);
 };
 
-export const updateTicketStatusController: RequestHandler<IdParams> = async (
-  req,
-  res,
-) => {
+export const updateTicketStatusController: RequestHandler<
+  IdParams,
+  BaseResponse<any>
+> = async (req, res) => {
   const user = req.user!;
 
   const updated = await updateTicketStatus({
@@ -112,9 +133,12 @@ export const updateTicketStatusController: RequestHandler<IdParams> = async (
     comment: req.body.comment,
   });
 
-  res.json({
-    status: 200,
-    message: 'Ticket status updated',
+  const body: BaseResponse<typeof updated> = {
+    success: true,
     data: updated,
-  });
+    errors: null,
+    message: 'Ticket status updated',
+  };
+
+  res.status(200).json(body);
 };

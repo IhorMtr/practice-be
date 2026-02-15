@@ -9,8 +9,3 @@ export type LoginBody = {
   email: string;
   password: string;
 };
-
-export type AuthCookies = {
-  sessionId?: string;
-  refreshToken?: string;
-};

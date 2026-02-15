@@ -18,11 +18,7 @@ export type {
   ExpiresIn,
 } from './types/jwt-payload.type.js';
 
-export type {
-  RegisterBody,
-  LoginBody,
-  AuthCookies,
-} from './types/auth.type.js';
+export type { RegisterBody, LoginBody } from './types/auth.type.js';
 
 export type { AdminUpdatePayload } from './types/users.type.js';
 export type {

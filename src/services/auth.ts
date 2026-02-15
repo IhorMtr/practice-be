@@ -61,9 +61,8 @@ async function createJwtSession(user: {
 
 export const registerUser = async (userData: RegisterBody) => {
   const existing = await UsersCollection.findOne({ email: userData.email });
-  if (existing) {
+  if (existing)
     throw createHttpError(409, 'Email already in use. Try different one');
-  }
 
   const { name, email, password } = userData;
   const encryptedPassword = await bcrypt.hash(password, 10);
@@ -92,10 +91,8 @@ export const loginUser = async (userData: LoginBody): Promise<AuthSession> => {
 
   if (!user) throw createHttpError(401, 'Invalid email or password');
   if (user.isActive === false) throw createHttpError(403, 'User is inactive');
-
-  if (user.role === null) {
+  if (user.role === null)
     throw createHttpError(403, 'User role is not assigned yet');
-  }
 
   const ok = await bcrypt.compare(userData.password, user.password);
   if (!ok) throw createHttpError(401, 'Invalid email or password');
@@ -105,32 +102,19 @@ export const loginUser = async (userData: LoginBody): Promise<AuthSession> => {
   return createJwtSession({ _id: user._id, role: user.role });
 };
 
-export const logoutUser = async (sessionId: string) => {
-  await SessionsCollection.deleteOne({ _id: sessionId });
-};
-
-export const refreshUsersSession = async ({
-  sessionId,
-  refreshToken,
-}: {
-  sessionId?: string;
-  refreshToken?: string;
-}): Promise<AuthSession> => {
-  if (!sessionId || !refreshToken) {
-    throw createHttpError(401, 'Missing session cookies');
-  }
+export const refreshUsersSession = async (
+  refreshToken: string,
+): Promise<AuthSession> => {
+  let payload: { sessionId: string; userId: string };
 
   try {
-    const payload = verifyRefreshToken(refreshToken);
-    if (payload.sessionId !== sessionId) {
-      throw createHttpError(401, 'Invalid refresh token');
-    }
+    payload = verifyRefreshToken(refreshToken);
   } catch {
     throw createHttpError(401, 'Invalid refresh token');
   }
 
   const session = await SessionsCollection.findOne({
-    _id: sessionId,
+    _id: payload.sessionId,
     refreshToken,
   });
 
@@ -146,12 +130,29 @@ export const refreshUsersSession = async ({
   const user = await UsersCollection.findById(session.userId);
   if (!user) throw createHttpError(401, 'User not found');
   if (user.isActive === false) throw createHttpError(403, 'User is inactive');
-
-  if (user.role === null) {
+  if (user.role === null)
     throw createHttpError(403, 'User role is not assigned yet');
-  }
 
-  await SessionsCollection.deleteOne({ _id: sessionId });
+  await SessionsCollection.deleteOne({ _id: payload.sessionId });
 
   return createJwtSession({ _id: user._id, role: user.role });
+};
+
+export const logoutUser = async (refreshToken: string) => {
+  let payload: { sessionId: string; userId: string };
+
+  try {
+    payload = verifyRefreshToken(refreshToken);
+  } catch {
+    throw createHttpError(401, 'Invalid refresh token');
+  }
+
+  const deleted = await SessionsCollection.deleteOne({
+    _id: payload.sessionId,
+    refreshToken,
+  });
+
+  if (!deleted.deletedCount) {
+    throw createHttpError(401, 'Session not found');
+  }
 };

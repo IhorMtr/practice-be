@@ -2,7 +2,6 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import pino from 'pino';
-import cookieParser from 'cookie-parser';
 import { pinoHttp } from 'pino-http';
 
 import authRouter from './routers/auth.js';
@@ -27,8 +26,6 @@ export function setupServer() {
   );
 
   app.use(express.json());
-
-  app.use(cookieParser());
 
   app.use(
     pinoHttp({

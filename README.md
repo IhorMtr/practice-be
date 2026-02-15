@@ -2,8 +2,7 @@
 
 ## Опис
 
-Backend-частина веб-застосунку для сервісної компанії з ремонту та обслуговування техніки.
-Реалізовано REST API, автентифікацію/авторизацію на JWT (access + refresh), рольову модель доступу (RBAC) та CRUD для основних сутностей: користувачі системи, клієнти, заявки на ремонт.
+Backend-частина веб-застосунку для сервісної компанії з ремонту та обслуговування техніки. Реалізовано REST API, автентифікацію/авторизацію на JWT (access + refresh), рольову модель доступу (RBAC) та CRUD для основних сутностей: користувачі системи, клієнти, заявки на ремонт.
 
 ---
 
@@ -86,16 +85,14 @@ npm start
 - `manager` — робота з клієнтами та заявками
 - `technician` — доступ лише до заявок, призначених йому
 
-**Важливо:** під час реєстрації користувач створюється з `role = null`.
-Поки адміністратор не призначить роль — користувач не може отримати токени (login/refresh заборонені).
+**Важливо:** під час реєстрації користувач створюється з `role = null`. Поки адміністратор не призначить роль — користувач не може отримати токени (login/refresh заборонені).
 
 ---
 
 ## Автентифікація (JWT)
 
-- **Access token** повертається у відповіді на `POST /api/auth/login` та `POST /api/auth/refresh`
-- **Refresh token** зберігається в httpOnly cookie `refreshToken`
-- **sessionId** зберігається в httpOnly cookie `sessionId`
+- **Access token** повертається у відповіді на `POST /api/auth/login` та `POST /api/auth/refresh`.
+- **Refresh token** повертається у тілі відповіді разом із **access token** (cookies не використовуються).
 - Для приватних ендпоінтів потрібен заголовок:
 
 ```
@@ -110,8 +107,8 @@ Authorization: Bearer <accessToken>
 
 - `POST /api/auth/register` — реєстрація (створює користувача з `role=null`)
 - `POST /api/auth/login` — логін (потрібна роль та активність)
-- `POST /api/auth/refresh` — оновлення сесії (cookies)
-- `POST /api/auth/logout` — вихід (тільки при валідній refresh-сесії)
+- `POST /api/auth/refresh` — оновлення сесії (приймає `refreshToken` у body)
+- `POST /api/auth/logout` — вихід (приймає `refreshToken` у body)
 
 ---
 
@@ -158,14 +155,11 @@ Authorization: Bearer <accessToken>
 
 **Ендпоінти:**
 
-- `GET /api/tickets?status=&priority=&search=` — список заявок + фільтри/пошук
-  (для `technician` повертаються тільки його заявки)
-- `GET /api/tickets/:id` — отримати заявку
-  (для `technician` тільки якщо вона призначена йому)
+- `GET /api/tickets?status=&priority=&search=` — список заявок + фільтри/пошук (для `technician` повертаються тільки його заявки)
+- `GET /api/tickets/:id` — отримати заявку (для `technician` тільки якщо вона призначена йому)
 - `POST /api/tickets` — створити заявку (`admin/manager`)
 - `PATCH /api/tickets/:id` — редагування заявки (`admin/manager`)
-- `PATCH /api/tickets/:id/status` — зміна статусу (+ коментар)
-  (`admin/manager/technician` у межах прав)
+- `PATCH /api/tickets/:id/status` — зміна статусу (+ коментар) (`admin/manager/technician` у межах прав)
 
 ---
 
@@ -174,8 +168,7 @@ Authorization: Bearer <accessToken>
 ### 1) Перевірка seed адміністратора
 
 1. Запустіть сервер
-2. Переконайтеся, що в MongoDB з’явився користувач `ADMIN_EMAIL` з роллю `admin`
-   (лише якщо його не було)
+2. Переконайтеся, що в MongoDB з’явився користувач `ADMIN_EMAIL` з роллю `admin` (лише якщо його не було)
 
 ---
 
@@ -223,12 +216,42 @@ PATCH /api/users/:id
 ### 5) Login користувача після призначення ролі
 
 1. Виконайте `POST /api/auth/login` як user → отримайте `accessToken`
-2. Перевірте доступ до приватних ендпоінтів
-   (наприклад, `GET /api/clients`)
+2. Перевірте доступ до приватних ендпоінтів (наприклад, `GET /api/clients`)
+3. **Збережіть refresh token**, який повертається у відповіді на login (він потрібен для `/api/auth/refresh` та `/api/auth/logout`).
 
 ---
 
-### 6) CRUD клієнтів (`admin/manager`)
+### 6) Refresh сесії (через body)
+
+Виконайте:
+
+```json
+POST /api/auth/refresh
+{
+  "refreshToken": "<refreshToken>"
+}
+```
+
+Очікувано: повернеться нова пара токенів (**accessToken** і **refreshToken**). Використовуйте новий refresh token для наступних refresh/logout.
+
+---
+
+### 7) Logout (через body)
+
+Виконайте:
+
+```json
+POST /api/auth/logout
+{
+  "refreshToken": "<refreshToken>"
+}
+```
+
+Очікувано: **200** та успішне завершення сесії.
+
+---
+
+### 8) CRUD клієнтів (`admin/manager`)
 
 1. `POST /api/clients` (Bearer manager/admin)
 2. `GET /api/clients?search=...`
@@ -237,7 +260,7 @@ PATCH /api/users/:id
 
 ---
 
-### 7) CRUD заявок + обмеження `technician`
+### 9) CRUD заявок + обмеження `technician`
 
 1. Створіть клієнта
 2. `POST /api/tickets` (`admin/manager`)

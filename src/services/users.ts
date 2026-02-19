@@ -1,16 +1,13 @@
 import createHttpError from 'http-errors';
-
 import { UsersCollection } from '../db/models/user.js';
-import { AdminUpdatePayload } from '../types/index.js';
+import type { AdminUpdatePayload } from '../types/index.js';
 
 export const listUsers = async () => {
-  const users = await UsersCollection.find().select('-password');
-  return users;
+  return UsersCollection.find().select('-password');
 };
 
 export const getUserById = async (userId: string) => {
-  const user = await UsersCollection.findById(userId).select('-password');
-  return user;
+  return UsersCollection.findById(userId).select('-password');
 };
 
 export const updateUserByAdmin = async (
@@ -25,4 +22,8 @@ export const updateUserByAdmin = async (
 
   if (!updated) throw createHttpError(404, 'User not found');
   return updated;
+};
+
+export const listTechnicians = async () => {
+  return UsersCollection.find({ role: 'technician' }).select('-password');
 };

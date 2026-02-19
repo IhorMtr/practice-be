@@ -8,17 +8,24 @@ import {
   getUserByIdController,
   listUsersController,
   updateUserByAdminController,
+  listTechniciansController,
 } from '../controllers/users.js';
 
 const router = Router();
 
 router.use(authenticate);
-router.use(authorize('admin'));
 
-router.get('/', listUsersController);
-router.get('/:id', getUserByIdController);
+router.get(
+  '/technicians',
+  authorize('admin', 'manager'),
+  listTechniciansController,
+);
+
+router.get('/', authorize('admin'), listUsersController);
+router.get('/:id', authorize('admin'), getUserByIdController);
 router.patch(
   '/:id',
+  authorize('admin'),
   validateBody(updateUserByAdminSchema),
   updateUserByAdminController,
 );

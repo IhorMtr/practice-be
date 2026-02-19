@@ -6,6 +6,7 @@ import {
   listUsers,
   getUserById,
   updateUserByAdmin,
+  listTechnicians,
 } from '../services/users.js';
 import type { IdParams, BaseResponse } from '../types/index.js';
 
@@ -61,6 +62,22 @@ export const updateUserByAdminController: RequestHandler<
     data: updated,
     errors: null,
     message: 'User updated',
+  };
+
+  res.status(200).json(body);
+};
+
+export const listTechniciansController: RequestHandler<
+  {},
+  BaseResponse<any>
+> = async (_req, res) => {
+  const techs = await listTechnicians();
+
+  const body: BaseResponse<typeof techs> = {
+    success: true,
+    data: techs,
+    errors: null,
+    message: 'Technicians list',
   };
 
   res.status(200).json(body);

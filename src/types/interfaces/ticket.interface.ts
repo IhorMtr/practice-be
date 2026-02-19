@@ -13,6 +13,7 @@ export interface TicketHistoryItem {
     | 'comment';
   fromStatus?: TicketStatus;
   toStatus?: TicketStatus;
+  toTechnicianId?: Types.ObjectId | null;
   comment?: string;
 }
 

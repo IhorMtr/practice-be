@@ -17,8 +17,10 @@ const historySchema = new Schema<TicketHistoryItem>(
         'comment',
       ],
     },
+
     fromStatus: { type: String, enum: TICKET_STATUSES },
     toStatus: { type: String, enum: TICKET_STATUSES },
+    toTechnicianId: { type: Schema.Types.ObjectId, ref: 'user', default: null },
     comment: { type: String },
   },
   { _id: false },
@@ -29,7 +31,6 @@ const ticketSchema = new Schema<Ticket>(
     clientId: { type: Schema.Types.ObjectId, ref: 'client', required: true },
     deviceType: { type: String, required: true, trim: true },
     problemDescription: { type: String, required: true, trim: true },
-
     priority: {
       type: String,
       enum: TICKET_PRIORITIES,
@@ -42,16 +43,13 @@ const ticketSchema = new Schema<Ticket>(
       required: true,
       default: 'new',
     },
-
     assignedTechnicianId: {
       type: Schema.Types.ObjectId,
       ref: 'user',
       default: null,
     },
-
     estimatedCost: { type: Number, default: null },
     finalCost: { type: Number, default: null },
-
     history: { type: [historySchema], required: true, default: [] },
   },
   { timestamps: true, versionKey: false },

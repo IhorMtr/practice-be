@@ -25,10 +25,17 @@ export type {
   CreateClientPayload,
   UpdateClientPayload,
 } from './types/client.type.js';
-export type { IdParams } from './types/global.type.js';
+export type {
+  IdParams,
+  IdNameEmail,
+  ClientShort,
+} from './types/global.type.js';
 export type {
   CreateTicketPayload,
   ManagerUpdatePayload,
+  ExpandedHistoryItem,
+  ExpandedTicket,
+  PopulatedTicketLean,
 } from './types/tickets.type.js';
 export type { BaseResponse } from './types/base-respons.type.js';
 export type { KnownError } from './types/error-handle.type.js';

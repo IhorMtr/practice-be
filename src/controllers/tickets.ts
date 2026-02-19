@@ -8,7 +8,7 @@ import {
   getTicketById,
   updateTicketByManager,
   updateTicketStatus,
-} from '../services/tickets.js';
+} from '../services/tickets/ticket.service.js';
 import type { BaseResponse } from '../types/index.js';
 
 export const createTicketController: RequestHandler<

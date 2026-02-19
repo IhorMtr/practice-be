@@ -4,6 +4,7 @@ import { isValidObjectId, Types } from 'mongoose';
 import type {
   CreateTicketPayload,
   ExpandedTicket,
+  ListTicketsOpts,
   ManagerUpdatePayload,
   PopulatedTicketLean,
   TicketStatus,
@@ -71,15 +72,8 @@ export const createTicket = async (
   return getExpandedTicketOrThrow(doc._id);
 };
 
-export const listTickets = async (opts: {
-  role: UserRole;
-  actorId: string;
-  status?: TicketStatus;
-  priority?: any;
-  clientId?: string;
-  search?: string;
-}) => {
-  const filter = buildTicketsFilter(opts as any);
+export const listTickets = async (opts: ListTicketsOpts) => {
+  const filter = buildTicketsFilter(opts);
 
   const docs = await TicketsCollection.find(filter)
     .sort({ createdAt: -1 })

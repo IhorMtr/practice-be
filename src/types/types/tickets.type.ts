@@ -1,6 +1,14 @@
 import { Types } from 'mongoose';
-import { ClientShort, IdNameEmail, TicketPriority } from '../index.js';
-import { TicketStatus } from '../index.js';
+import {
+  ClientShort,
+  IdNameEmail,
+  Ticket,
+  TicketPriority,
+  TicketStatus,
+  UserRole,
+} from '../index.js';
+
+export type TicketAction = Ticket['history'][number]['action'];
 
 export type CreateTicketPayload = {
   clientId: string;
@@ -21,9 +29,9 @@ export type ManagerUpdatePayload = Partial<{
 
 export type ExpandedHistoryItem = {
   at: Date;
-  action: string;
-  fromStatus?: string;
-  toStatus?: string;
+  action: TicketAction;
+  fromStatus?: TicketStatus;
+  toStatus?: TicketStatus;
   toTechnicianId?: string | null;
   comment?: string;
   actorId: string;
@@ -36,8 +44,8 @@ export type ExpandedTicket = {
   assignedTechnician: IdNameEmail | null;
   deviceType: string;
   problemDescription: string;
-  priority: string;
-  status: string;
+  priority: TicketPriority;
+  status: TicketStatus;
   estimatedCost: number | null;
   finalCost: number | null;
   history: ExpandedHistoryItem[];
@@ -54,19 +62,28 @@ export type PopulatedTicketLean = {
     | Types.ObjectId;
   deviceType: string;
   problemDescription: string;
-  priority: string;
-  status: string;
+  priority: TicketPriority;
+  status: TicketStatus;
   estimatedCost: number | null;
   finalCost: number | null;
   history: Array<{
     at: Date;
     actorId: (IdNameEmail & { _id: Types.ObjectId }) | Types.ObjectId;
-    action: string;
-    fromStatus?: string;
-    toStatus?: string;
+    action: TicketAction;
+    fromStatus?: TicketStatus;
+    toStatus?: TicketStatus;
     toTechnicianId?: Types.ObjectId | null;
     comment?: string;
   }>;
   createdAt: Date;
   updatedAt: Date;
+};
+
+export type ListTicketsOpts = {
+  role: UserRole;
+  actorId: string;
+  status?: TicketStatus;
+  priority?: TicketPriority;
+  clientId?: string;
+  search?: string;
 };

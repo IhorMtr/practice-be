@@ -1,21 +1,8 @@
 import createHttpError from 'http-errors';
 import { isValidObjectId } from 'mongoose';
 
-import type {
-  TicketPriority,
-  TicketStatus,
-  UserRole,
-} from '../../types/index.js';
+import type { ListTicketsOpts } from '../../types/index.js';
 import { escapeRegExp } from '../../utils/mongoose-ids.js';
-
-export type ListTicketsOpts = {
-  role: UserRole;
-  actorId: string;
-  status?: TicketStatus;
-  priority?: TicketPriority;
-  clientId?: string;
-  search?: string;
-};
 
 export const buildTicketsFilter = (opts: ListTicketsOpts) => {
   const filter: Record<string, unknown> = {};

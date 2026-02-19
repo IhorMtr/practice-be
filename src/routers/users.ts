@@ -9,11 +9,14 @@ import {
   listUsersController,
   updateUserByAdminController,
   listTechniciansController,
+  getMeController,
 } from '../controllers/users.js';
 
 const router = Router();
 
 router.use(authenticate);
+
+router.get('/me', getMeController);
 
 router.get(
   '/technicians',

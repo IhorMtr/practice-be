@@ -27,3 +27,9 @@ export const updateUserByAdmin = async (
 export const listTechnicians = async () => {
   return UsersCollection.find({ role: 'technician' }).select('-password');
 };
+
+export const getMe = async (userId: string) => {
+  const user = await UsersCollection.findById(userId).select('-password');
+  if (!user) throw createHttpError(404, 'User not found');
+  return user;
+};

@@ -7,6 +7,7 @@ import {
   getUserById,
   updateUserByAdmin,
   listTechnicians,
+  getMe,
 } from '../services/users.js';
 import type { IdParams, BaseResponse } from '../types/index.js';
 
@@ -78,6 +79,25 @@ export const listTechniciansController: RequestHandler<
     data: techs,
     errors: null,
     message: 'Technicians list',
+  };
+
+  res.status(200).json(body);
+};
+
+export const getMeController: RequestHandler<{}, BaseResponse<any>> = async (
+  req,
+  res,
+) => {
+  const userId = req.user?.id;
+  if (!userId) throw createHttpError(401, 'Unauthorized');
+
+  const user = await getMe(userId);
+
+  const body: BaseResponse<typeof user> = {
+    success: true,
+    data: user,
+    errors: null,
+    message: 'User found',
   };
 
   res.status(200).json(body);
